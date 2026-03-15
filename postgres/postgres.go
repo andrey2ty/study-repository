@@ -9,7 +9,7 @@ import (
 
 func ConnetctionToPostgres() {
 	ctx := context.Background()
-	connect, err := pgx.Connect(ctx, "postgres://postgres:postgres@localhost:5432/postgres")
+	connect, err := pgx.Connect(ctx, "postgres://postgres:0710@localhost:5432/postgres")
 	if err != nil {
 		panic(err)
 	}
