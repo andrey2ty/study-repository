@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN about_myself VARCHAR(300);
