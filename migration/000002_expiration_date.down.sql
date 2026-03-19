@@ -1,0 +1,1 @@
+ALTER TABLE product DROP COLUMN expiration_date;
