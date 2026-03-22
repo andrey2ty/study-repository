@@ -11,3 +11,5 @@ migrate-up :
 migrate-down :
 	@migrate -path migrations -database ${CONN_STRING} down
 
+migrate-version :
+	@migrate -path migrations -database ${CONN_STRING} version
