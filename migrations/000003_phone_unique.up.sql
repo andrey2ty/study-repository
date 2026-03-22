@@ -1,0 +1,1 @@
+ALTER TABLE users ADD CONSTRAINT phone_unique UNIQUE (phone);
