@@ -1,21 +1,11 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"study/postgres"
-	feature_sql "study/postgres/featureSql"
+	httpserver "study/http_server"
 )
 
 func main() {
-	ctx := context.Background()
-	conn, err := postgres.ConnetctionToPostgres(ctx)
-	if err != nil {
+	if err := httpserver.StartHttpServer(); err != nil {
 		panic(err)
 	}
-	if err := feature_sql.CreateTable(conn, ctx); err != nil {
-		panic(err)
-	}
-
-	fmt.Println("succeed!")
 }
