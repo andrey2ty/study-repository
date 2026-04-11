@@ -1,10 +1,9 @@
-FROM golang:1.26.1-bookworm
+FROM golang:1.26.2-bookworm
 
 WORKDIR /app
 
 COPY . .
 
 RUN go mod tidy
-RUN go build -o /app/exe main.go
 
-CMD ["/app/exe"]
+CMD ["go","run","main.go"]

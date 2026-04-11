@@ -1,6 +1,9 @@
 include .env
 export
 
+run-http-app:
+	docker run -p 8080:8080 docker-practice:latest 
+
 service-run :
 	@go run main.go
 
