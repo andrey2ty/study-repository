@@ -14,11 +14,14 @@ un-deploy:
 	docker compose down application
 
 migrate-up :
-	@migrate -path migrations -database ${CONN_STRING} up
+	@migrate -path migration-docker -database ${CONN_STRING} up
 
 
 migrate-down :
-	@migrate -path migrations -database ${CONN_STRING} down
+	@migrate -path migration-docker -database ${CONN_STRING} down
 
 migrate-version :
-	@migrate -path migrations -database ${CONN_STRING} version
+	@migrate -path migration-docker -database ${CONN_STRING} version
+
+postgres-up:
+	docker run -v ./out/pg_data:/var/lib/postgresql -p 5432:5432 -e POSTGRES_PASSWORD="0710" -d postgres:18-bookworm

@@ -1,17 +1,32 @@
 package dockerpractice
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/jackc/pgx/v5"
 )
+
+type HttpHandler struct {
+	ctx  context.Context
+	conn *pgx.Conn
+}
+
+func NewHttpHandler(ctx context.Context, conn *pgx.Conn) HttpHandler {
+	return HttpHandler{
+		ctx:  ctx,
+		conn: conn,
+	}
+}
 
 type PeopleDto struct {
 	FullName string `json:"fullname"`
 	Position string `json:"position"`
 }
 
-func HttpHandleAddPeople(w http.ResponseWriter, r *http.Request) {
+func (h *HttpHandler) HttpHandleAddPeople(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		return
 	}
@@ -26,34 +41,37 @@ func HttpHandleAddPeople(w http.ResponseWriter, r *http.Request) {
 
 	people := NewPeople(peopled.FullName, peopled.Position)
 
-	PeopleM[people.ID] = people
+	peoplemodel := NewPeopleModel(people.ID, people.FullName, people.Position)
+
+	InsertPeople(h.conn, h.ctx, peoplemodel)
 
 }
 
-func HttpHandleGetPeople(w http.ResponseWriter, r *http.Request) {
+func (h *HttpHandler) HttpHandleGetPeople(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		return
 	}
 
-	data, _ := json.MarshalIndent(PeopleM, "", "    ")
+	peoplearr, err := SelectPeople(h.conn, h.ctx)
+
+	if err != nil {
+		return
+	}
+
+	data, _ := json.MarshalIndent(peoplearr, "", "    ")
 
 	w.Write(data)
 }
 
-func HttpHandleDeletePeople(w http.ResponseWriter, r *http.Request) {
+func (h *HttpHandler) HttpHandleDeletePeople(w http.ResponseWriter, r *http.Request) {
 
 	idstr := r.URL.Query().Get("id")
 
 	id, _ := strconv.Atoi(idstr)
 
-	v, ok := PeopleM[id]
-	if ok != true {
+	if err := DeletePeople(h.conn, h.ctx, id); err != nil {
 		return
 	}
 
-	delete(PeopleM, id)
-
-	data, _ := json.Marshal(v)
-
-	w.Write(data)
+	w.Write([]byte("успешно"))
 }
