@@ -3,6 +3,7 @@ package dockerpractice
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -70,8 +71,16 @@ func (h *HttpHandler) HttpHandleDeletePeople(w http.ResponseWriter, r *http.Requ
 	id, _ := strconv.Atoi(idstr)
 
 	if err := DeletePeople(h.conn, h.ctx, id); err != nil {
+		if errors.Is(err, ErrIdNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(ErrIdNotFound.Error()))
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("ошибка сервера"))
+		}
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("успешно"))
 }

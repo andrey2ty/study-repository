@@ -1,9 +1,6 @@
 include .env
 export
 
-run-http-app:
-	docker run -p 8080:8080 docker-practice:latest 
-
 service-run :
 	@go run main.go
 
@@ -24,4 +21,7 @@ migrate-version :
 	@migrate -path migration-docker -database ${CONN_STRING} version
 
 postgres-up:
-	docker run -v ./out/pg_data:/var/lib/postgresql -p 5432:5432 -e POSTGRES_PASSWORD="0710" -d postgres:18-bookworm
+	docker-compose -f docker-compose.practice.yaml up -d postgres
+
+run-http-app:
+	docker-compose -f docker-compose.practice.yaml up -d go-app

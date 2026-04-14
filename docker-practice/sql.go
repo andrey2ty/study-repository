@@ -25,9 +25,18 @@ func DeletePeople(conn *pgx.Conn, ctx context.Context, id int) error {
 	DELETE FROM people
 	WHERE id = $1
 	`
-	_, err := conn.Exec(ctx, sql, id)
+	row, err := conn.Exec(ctx, sql, id)
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	rowAffect := row.RowsAffected()
+	if rowAffect == 0 {
+		return ErrIdNotFound
+	}
+
+	return nil
 }
 
 func InsertPeople(conn *pgx.Conn, ctx context.Context, people PeopleModel) error {
@@ -48,7 +57,7 @@ func SelectPeople(conn *pgx.Conn, ctx context.Context) ([]PeopleModel, error) {
 	rows, err := conn.Query(ctx, sql)
 
 	if err != nil {
-		return []PeopleModel{}, nil
+		return nil, err
 	}
 
 	arr := make([]PeopleModel, 0)
@@ -57,7 +66,7 @@ func SelectPeople(conn *pgx.Conn, ctx context.Context) ([]PeopleModel, error) {
 		var people PeopleModel
 
 		if err := rows.Scan(&people.Id, &people.FullName, &people.Position); err != nil {
-			return []PeopleModel{}, nil
+			return nil, err
 		}
 
 		arr = append(arr, people)
