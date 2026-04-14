@@ -1,9 +1,9 @@
 package main
 
 import (
-	dockerpractice "study/docker-practice"
+	"study/pid"
 )
 
 func main() {
-	dockerpractice.Server()
+	pid.WorkerEnv()
 }
