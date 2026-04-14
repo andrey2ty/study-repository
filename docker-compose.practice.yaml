@@ -1,0 +1,20 @@
+services:
+  go-app:
+    build: .
+    container_name: go-application
+    ports:
+      - "8080:8080"
+    environment:
+      - CONN_STRING=postgres://postgres:0710@db-postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: db-postgres
+    image: postgres:18-bookworm
+    environment:
+      - POSTGRES_PASSWORD=0710
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./out/pg_data:/var/lib/postgresql
