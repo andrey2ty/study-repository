@@ -1,6 +1,6 @@
 services:
   go-app:
-    build: .
+    image: study-repository-go-app:latest
     container_name: go-application
     ports:
       - "8080:8080"
